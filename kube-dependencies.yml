@@ -1,6 +1,12 @@
 - hosts: all
   become: yes
   tasks:
+   - name: Install 'yum-utils', 'lvm2' and 'device-mapper-persistent-data'
+     package:
+       name: '{{ item }}'
+       state: latest
+     with_items:
+       - yum-utils
    - name: Add docker-ce repo
      ansible.builtin.yum_repository:
        name: Add docker repo

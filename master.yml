@@ -12,14 +12,6 @@
         daemon_reload: yes
         name: containerd
 
-    - name: install Pod network
-      become: yes
-      become_user: kubi
-      shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.txt
-      args:
-        chdir: $HOME
-        creates: pod_network_setup.txt
-
     - name: Resetting kubeadm
       shell: kubeadm reset -f
       register: output
@@ -50,3 +42,11 @@
       shell: "echo $KUBECONFIG"
       environment:
         KUBECONFIG: /home/kubi/.kube/config
+
+    - name: install Pod network
+      become: yes
+      become_user: kubi
+      shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.txt
+      args:
+        chdir: $HOME
+        creates: pod_network_setup.txt

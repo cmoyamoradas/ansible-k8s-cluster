@@ -21,8 +21,6 @@
        state: present
      with_items:
        - docker-ce
-       - docker-ce-cli
-       - containerd.io
    - name: " Starting and Enabling Docker service"
      service:
        name: docker

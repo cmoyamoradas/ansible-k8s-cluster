@@ -14,6 +14,6 @@
         validate: 'visudo -cf %s'
 
     - name: set up authorized keys for the kubi user
-      authorized_key: user=kubi key="{{item}}"
+      ansible.posix.authorized_key: user=kubi key="{{item}}"
       with_file:
         - ~/.ssh/id_rsa.pub

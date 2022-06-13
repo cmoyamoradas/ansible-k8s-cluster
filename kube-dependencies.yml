@@ -1,26 +1,26 @@
 - hosts: all
   become: yes
   tasks:
-   - name: Install 'yum-utils', 'lvm2' and 'device-mapper-persistent-data'
+   - name: Install 'yum-utils'
      package:
        name: '{{ item }}'
        state: latest
      with_items:
        - yum-utils
    - name: Add docker-ce repo
-     ansible.builtin.yum_repository:
+     yum_repository:
        name: Add docker repo
        description: Docker CE repo
        enabled: true
        baseurl: https://download.docker.com/linux/centos/docker-ce.repo
    - name: install Docker
-     ansible.builtin.yum:
-       name:
-         - docker-ce
-         - docker-ce-cli
-         - containerd.io
-       state: present
-       update_cache: true
+     package:
+       name: '{{ item }}'
+       state: latest
+     with_items:
+       - docker-ce
+       - docker-ce-cli
+       - containerd.io
    - name: " Starting and Enabling Docker service"
      service:
        name: docker

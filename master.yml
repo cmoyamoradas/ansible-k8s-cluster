@@ -38,6 +38,7 @@
         owner: kubi
 
     - name: adding KUBECONFIG
+      shell: "echo $KUBECONFIG"
       environment:
         KUBECONFIG: /home/kubi/.kube/config
 

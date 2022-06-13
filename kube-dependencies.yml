@@ -12,7 +12,7 @@
        url: https://download.docker.com/linux/centos/docker-ce.repo
        dest: /etc/yum.repos.d/docker-ce.repo
    - name: install Docker
-     package:
+     yum:
        name: '{{ item }}'
        state: present
      with_items:

@@ -37,7 +37,7 @@
         remote_src: yes
         owner: kubi
 
-    - name: set KUBECONFIG
+    - name: adding KUBECONFIG
       environment:
         KUBECONFIG: /home/kubi/.kube/config
 

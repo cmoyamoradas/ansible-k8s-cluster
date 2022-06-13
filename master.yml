@@ -46,7 +46,8 @@
     - name: install Pod network
       become: yes
       become_user: kubi
-      shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.txt
-      args:
-        chdir: $HOME
-        creates: pod_network_setup.txt
+      shell: kubectl create -f https://projectcalico.docs.tigera.io/manifests/tigera-operator.yaml
+      #shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.txt
+      #args:
+      #  chdir: $HOME
+      #  creates: pod_network_setup.txt

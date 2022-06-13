@@ -6,6 +6,12 @@
         state: absent
         path: /etc/containerd/config.toml
 
+    - name: Restart service containerd
+      ansible.builtin.systemd:
+        state: restarted
+        daemon_reload: yes
+        name: containerd
+
     - name: Resetting kubeadm
       shell: kubeadm reset -f
       register: output

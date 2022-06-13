@@ -1,0 +1,63 @@
+- hosts: master
+  become: yes
+  tasks:
+    - name: install Kubernetes dashboard (1/7)
+      become: yes
+      become_user: root
+      shell: kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml
+    
+    - name: install Kubernetes dashboard (2/7)
+      become: yes
+      become_user: root
+      shell: kubectl create -n kube-system serviceaccount admin
+      ignore_errors: true
+    
+    - name: install Kubernetes dashboard (3/7)
+      become: yes
+      become_user: root
+      shell: kubectl create clusterrolebinding permissive-binding --clusterrole=cluster-admin --user=admin --user=kubelet --group=system:serviceaccounts
+      ignore_errors: true
+    
+    - name: install Kubernetes dashboard (4/7)
+      become: yes
+      become_user: root
+      shell: kubectl -n kube-system get serviceaccount admin -o yaml
+      register: serviceaccount_output
+    
+    - set_fact:
+         secret_name: "{{ line | regex_search('name:([^\"]+)','\\1') }}"   
+      vars:
+        line: "{{ serviceaccount_output.stdout_lines | last }}"
+    - debug:
+        msg: "{{ secret_name[0] }}"
+          
+    - name: install Kubernetes dashboard (5/7)
+      become: yes
+      become_user: root
+      shell: kubectl -n kube-system get secret {{ secret_name[0] }} -o yaml
+      register: secret_output
+
+    - set_fact:
+         secret_value: "{{ line | regex_search('token:([^\"]+)','\\1') }}"
+      vars:
+        line: "{{ secret_output.stdout_lines[4] }}"
+    - debug:
+        msg: "{{ secret_value[0] | replace(' ','') }}"
+
+    - name: install Kubernetes dashboard (5/7)
+      become: yes
+      become_user: root
+      shell: echo {{ secret_value[0] | replace(' ','') }} | base64 --decode > secret.txt
+
+    - firewalld:
+        port: 8001/tcp
+        zone: public
+        permanent: yes
+        immediate: yes
+        state: enabled
+    
+#    - name: install Kubernetes dashboard (7/7)
+#      become: yes
+#      become_user: cmoya
+#      shell: kubectl proxy --address='0.0.0.0' --accept-hosts='.*' &
+

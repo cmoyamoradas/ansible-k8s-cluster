@@ -1,0 +1,19 @@
+- hosts: all
+  become: yes
+  vars:
+    username: kubi
+    password: secret
+  tasks:
+    - name: create the 'kubi' user
+      user: name={{ username }} password={{ password | password_hash('sha512') }} append=yes state=present createhome=yes shell=/bin/bash
+
+    - name: allow 'kubi' to have passwordless sudo
+      lineinfile:
+        dest: /etc/sudoers
+        line: 'kubi ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+
+    - name: set up authorized keys for the kubi user
+      authorized_key: user=kubi key="{{item}}"
+      with_file:
+        - ~/.ssh/id_rsa.pub

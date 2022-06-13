@@ -1,0 +1,84 @@
+- hosts: all
+  become: yes
+  tasks:
+   - name: install Docker
+     yum:
+       name: docker
+       state: present
+       update_cache: true
+
+   - name: " Starting and Enabling Docker service"
+     service:
+       name: docker
+       state: started
+       enabled: yes
+
+   - name: disable SELinux
+     command: setenforce 0     
+     ignore_errors: true
+
+   - name: disable SELinux on reboot
+     selinux:
+       state: disabled
+   
+   - name: Disable SWAP since kubernetes can't work with swap enabled (1/2)
+     shell: |
+       swapoff -a
+
+   - name: Disable SWAP in fstab since kubernetes can't work with swap enabled (2/2)
+     replace:
+       path: /etc/fstab
+       regexp: '^(\s*)([^#\n]+\s+)(\w+\s+)swap(\s+.*)$'
+       replace: '#\1\2\3swap\4'
+
+   - name: ensure net.bridge.bridge-nf-call-ip6tables is set to 1
+     sysctl:
+      name: net.bridge.bridge-nf-call-ip6tables
+      value: 1
+      state: present
+
+   - name: ensure net.bridge.bridge-nf-call-iptables is set to 1
+     sysctl:
+      name: net.bridge.bridge-nf-call-iptables
+      value: 1
+      state: present
+   
+   - name: disable os firewall - firewalld
+     systemd:
+      name: firewalld
+      state: stopped
+      enabled: no
+
+   - name: add Kubernetes' YUM repository
+     yum_repository:
+      name: Kubernetes
+      description: Kubernetes YUM repository
+      baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+      gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+      gpgcheck: yes
+
+   - name: install kubelet
+     yum:
+        name: kubelet-1.19.0
+        state: present
+        update_cache: true
+
+   - name: install kubeadm
+     yum:
+        name: kubeadm-1.19.0
+        state: present
+
+   - name: start kubelet
+     service:
+       name: kubelet
+       enabled: yes
+       state: started
+
+- hosts: master
+  become: yes
+  tasks:
+   - name: install kubectl
+     yum:
+        name: kubectl-1.19.0
+        state: present
+        allow_downgrade: yes

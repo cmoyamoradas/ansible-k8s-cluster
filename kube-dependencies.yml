@@ -1,12 +1,16 @@
 - hosts: all
   become: yes
   tasks:
+   - name: Add docker-ce repo
+     yum-repository:
+       name: Add docker repo
+       description: Docker CE repo
+       baseUrl: https://download.docker.com/linux/centos/docker-ce.repo
    - name: install Docker
      yum:
        name: docker-ce,docker-ce-cli,containerd.io
        state: present
        update_cache: true
-
    - name: " Starting and Enabling Docker service"
      service:
        name: docker

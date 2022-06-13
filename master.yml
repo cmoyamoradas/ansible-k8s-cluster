@@ -13,20 +13,17 @@
         name: containerd
 
     - name: Resetting kubeadm
-      become: yes
       shell: kubeadm reset -f
       register: output
     
     - name: initialize the cluster
-      become: yes
-      shell: kubeadm init --apiserver-advertise-address=10.186.0.16 --ignore-preflight-errors all --pod-network-cidr=10.244.0.0/16 --token-ttl 0 >> cluster_initialized.txt
-      #shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --kubernetes-version=1.24.0 >> cluster_initialized.txt
+      #shell: kubeadm init --apiserver-advertise-address=10.186.0.16 --ignore-preflight-errors all --pod-network-cidr=10.244.0.0/16 --token-ttl 0 >> cluster_initialized.txt
+      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --kubernetes-version=1.24.0 >> cluster_initialized.txt
       args:
         chdir: $HOME
         creates: cluster_initialized.txt
 
     - name: create .kube directory
-      become: yes
       become_user: kubi
       file:
         path: $HOME/.kube
@@ -45,10 +42,10 @@
       environment:
         KUBECONFIG: /home/kubi/.kube/config
 
-    - name: install Pod network
-      become: yes
-      become_user: kubi
-      shell: kubectl create -f https://projectcalico.docs.tigera.io/manifests/tigera-operator.yaml
+    - #name: install Pod network
+      #become: yes
+      #become_user: kubi
+      #shell: kubectl create -f https://projectcalico.docs.tigera.io/manifests/tigera-operator.yaml
       #shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.txt
       #args:
       #  chdir: $HOME

@@ -2,13 +2,17 @@
   become: yes
   tasks:
    - name: Add docker-ce repo
-     yum_repository:
+     ansible.builtin.yum_repository:
        name: Add docker repo
        description: Docker CE repo
+       enabled: true
        baseurl: https://download.docker.com/linux/centos/docker-ce.repo
    - name: install Docker
-     yum:
-       name: docker-ce,docker-ce-cli,containerd.io
+     ansible.builtin.yum:
+       name:
+         - docker-ce
+         - docker-ce-cli
+         - containerd.io
        state: present
        update_cache: true
    - name: " Starting and Enabling Docker service"

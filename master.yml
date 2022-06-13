@@ -13,11 +13,13 @@
         name: containerd
 
     - name: Resetting kubeadm
+      become: yes
       shell: kubeadm reset -f
       register: output
     
     - name: initialize the cluster
-      shell: kubeadm init --apiserver-advertise-address=10.186.0.16 --ignore-preflight-errors all --pod-network-cidr=10.244.0.0/16 --token-ttl 0
+      become: yes
+      shell: kubeadm init --apiserver-advertise-address=10.186.0.16 --ignore-preflight-errors all --pod-network-cidr=10.244.0.0/16 --token-ttl 0 >> cluster_initialized.txt
       #shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --kubernetes-version=1.24.0 >> cluster_initialized.txt
       args:
         chdir: $HOME

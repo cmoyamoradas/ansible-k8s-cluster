@@ -1,6 +1,11 @@
 - hosts: master
   become: yes
   tasks:
+    - name: Delete conflicting ContainerIo config
+      file:
+        state: absent
+        path: /etc/containerd/config.toml
+
     - name: Resetting kubeadm
       shell: kubeadm reset -f
       register: output

@@ -2,25 +2,21 @@
   become: yes
   tasks:
     - name: install Kubernetes dashboard (1/7)
-      become: yes
-      become_user: root
-      shell: kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml
+      become_user: kubi
+      shell: kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.5.0/aio/deploy/recommended.yaml
     
     - name: install Kubernetes dashboard (2/7)
-      become: yes
-      become_user: root
+      become_user: kubi
       shell: kubectl create -n kube-system serviceaccount admin
       ignore_errors: true
     
     - name: install Kubernetes dashboard (3/7)
-      become: yes
-      become_user: root
+      become_user: kubi
       shell: kubectl create clusterrolebinding permissive-binding --clusterrole=cluster-admin --user=admin --user=kubelet --group=system:serviceaccounts
       ignore_errors: true
     
     - name: install Kubernetes dashboard (4/7)
-      become: yes
-      become_user: root
+      become_user: kubi
       shell: kubectl -n kube-system get serviceaccount admin -o yaml
       register: serviceaccount_output
     
@@ -32,8 +28,7 @@
         msg: "{{ secret_name[0] }}"
           
     - name: install Kubernetes dashboard (5/7)
-      become: yes
-      become_user: root
+      become_user: kubi
       shell: kubectl -n kube-system get secret {{ secret_name[0] }} -o yaml
       register: secret_output
 
@@ -45,8 +40,7 @@
         msg: "{{ secret_value[0] | replace(' ','') }}"
 
     - name: install Kubernetes dashboard (5/7)
-      become: yes
-      become_user: root
+      become_user: kubi
       shell: echo {{ secret_value[0] | replace(' ','') }} | base64 --decode > secret.txt
 
     - firewalld:

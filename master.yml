@@ -36,7 +36,11 @@
         dest: /home/kubi/.kube/config
         remote_src: yes
         owner: kubi
- 
+
+    - name: set KUBECONFIG
+      environment:
+        KUBECONFIG: /home/kubi/.kube/config
+
     - name: install Pod network
       become: yes
       become_user: kubi

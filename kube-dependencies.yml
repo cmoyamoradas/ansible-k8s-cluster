@@ -8,11 +8,9 @@
      with_items:
        - yum-utils
    - name: Add docker-ce repo
-     yum_repository:
-       name: Add docker repo
-       description: Docker CE repo
-       enabled: true
-       baseurl: https://download.docker.com/linux/centos/9/x86_64/stable
+     get_url:
+       url: https://download.docker.com/linux/centos/docker-ce.repo
+       dest: /etc/yum.repos.d/docker-ce.repo
    - name: install Docker
      package:
        name: '{{ item }}'

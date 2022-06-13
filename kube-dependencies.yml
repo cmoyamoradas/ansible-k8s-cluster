@@ -1,6 +1,10 @@
 - hosts: all
   become: yes
   tasks:
+   - name: Remove podamn
+     dnf:
+       name: podman,buildah
+       state: absent
    - name: Install 'yum-utils'
      package:
        name: '{{ item }}'

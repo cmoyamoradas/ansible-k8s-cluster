@@ -12,7 +12,7 @@
        name: Add docker repo
        description: Docker CE repo
        enabled: true
-       baseurl: https://download.docker.com/linux/centos/docker-ce.repo
+       baseurl: https://download.docker.com/linux/centos/9/x86_64/stable
    - name: install Docker
      package:
        name: '{{ item }}'
